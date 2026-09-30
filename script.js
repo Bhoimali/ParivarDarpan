@@ -84,7 +84,7 @@ function renderCards(dataObj) {
       : `<img src="https://via.placeholder.com/90" alt="No Photo">`;
     const topHeader = `
       <div class="top-header">
-        <img src="https://drive.google.com/thumbnail?id=1F_oNCN5v30FJlnJgMJhQFGt7X8TbrFUd&sz=w1000">
+        <img src="https://https://res.cloudinary.com/uvnoet8d/image/upload/v1790671878/new_logo_bhoimalisamaj.png">
         <h2 class="decorative-title-bhoi">भोईमाली समाज राजसमंद</h2>
         <div class="serial"> ${srNo}</div>
       </div>
