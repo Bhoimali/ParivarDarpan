@@ -1,0 +1,311 @@
+
+
+    body {
+      font-family: Arial, sans-serif;
+       /* background: url("https://drive.google.com/thumbnail?id=15rFll3ag66SUuiTJFfsiSuEQ4Y52yDNj&sz=w1000") no-repeat center center fixed; */
+      /* background: #ffe0b2; */
+    }
+
+    h1 {
+      text-align: center;
+      color: #e65100;
+    }
+
+    .search-box {
+      text-align: center;
+      /* margin-bottom: 20px; */
+      /* background: #ffe0b2; */
+    }
+
+    .search-box input {
+      padding: 8px 12px;
+      width: 60%;
+      max-width: 400px;
+      font-size: 14px;
+      border: 2px solid #e65100;
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      /* background: #ffe0b2; */
+    }
+
+    .id-card {
+      background: linear-gradient(145deg, #fff3e0, #ffcc80);
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 20px;
+      min-width: 800px;
+      max-width: 95%;
+      overflow-x: auto;
+      border: 1px solid #e65100;
+      transform: scale(1);
+      /* default for larger screens */
+      transition: transform 0.3s ease;
+    }
+
+    /* 📱 Only for small screens below 576px */
+    @media (max-width: 992px) {
+      .card-container {
+        transform: scale(0.40);
+        /* gape: 20px; */
+        transform-origin: top center;
+        /* optional – better centering on small screens */
+        height:100vh;
+      }
+      
+    }
+
+
+
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #ff9800, #e65100);
+      color: white;
+      border-radius: 10px;
+      padding: 8px 15px;
+      margin-bottom: 12px;
+      /* border: 2px solid #e65100; */
+    }
+
+    .top-header img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      object-fit: cover;
+      background: #fff;
+      /* border: 2px solid #e65100; */
+  image-rendering: crisp-edges; /* pixelated effect for icons */
+  image-rendering: -webkit-optimize-contrast;
+      
+    }
+
+    .top-header h2 {
+      margin: 0;
+      font-size: 33px;
+      font-weight: bold;
+      text-align: center;
+      flex: 1;
+      /* border: 2px solid #e65100; */
+    }
+
+    .serial {
+      font-weight: bold;
+      font-size: 32px;
+      color: white;
+      padding-right:20px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      /* border: 1px solid green;  */
+      border-radius: 5px;
+      
+    }
+
+    .card-col {
+      flex: 1;
+      padding: 5px;
+      text-align: left;
+      /* Xborder: 2px solid blue; */
+    }
+
+    .card-col img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid #e65100;
+      object-fit: cover;
+      margin: auto;
+      display: block;
+      border: 2px solid red;
+      
+    }
+
+    .card-col h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+      color: #d84315;
+      word-break: break-word;
+      /* border: 2px solid red; */
+    }
+
+    .card-col p {
+      margin: 2px 0;
+      font-size: 13px;
+      word-break: break-word;
+     
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #bf360c;
+      padding: 6px;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    th {
+      background-color: #ff6f00;
+      color: white;
+      text-align:center;
+    }
+
+    .print-section {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .print-select {
+      padding: 4px 8px;
+      border: 1px solid #e65100;
+      border-radius: 6px;
+      margin: 3px;
+    }
+
+    .print-btn {
+      background: #ff6f00;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .print-btn:hover {
+      background: #e65100;
+    }
+/* 
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    } */
+
+
+    th:nth-child(1),
+    td:nth-child(1),
+    th:nth-child(6),
+    td:nth-child(6),
+    th:nth-child(8),
+    td:nth-child(8),
+    th:nth-child(10),
+    td:nth-child(10) {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+
+
+
+.decorative-title{
+  text-align: center;
+  font-family: 'Noto Serif Devanagari', serif;
+  font-size: 28px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff9800, #e65100);
+  padding: 12px 20px;
+  border-radius: 12px;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  margin: auto;
+  margin-bottom:10px;
+  width: fit-content;
+}
+
+.decorative-title-bhoi {
+  text-align: center;
+  font-family: 'Noto Serif Devanagari', serif;
+  font-size: 28px;
+  color: #fff;
+  /* background: linear-gradient(135deg, #ff9800, #e65100); */
+  /* padding: 12px 20px; */
+  /* border-radius: 12px; */
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3); 
+  /* box-shadow: 0 4px 10px rgba(0,0,0,0.2); */ 
+  /* margin: auto; */
+  /* margin-bottom:10px; */
+  /* width:fit-content; */
+}
+
+
+
+
+
+.refresh-btn {
+  background: linear-gradient(135deg, #ff9800, #e65100);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 10px;
+  transition: 0.3s;
+}
+.refresh-btn:hover {
+  background: linear-gradient(135deg, #e65100, #bf360c);
+}
+
+/* Loader Animation */
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #e65100;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 12px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+.loader {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #e65100;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 10px auto;
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
