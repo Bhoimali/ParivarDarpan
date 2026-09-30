@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Members ID Cards</title>
+
+
+  <link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+
+  <script src="Backend.js"></script>
+
+
+
+
+</head>
+
+<body>
+  <div class="top">
+   <h3 class="decorative-title">परिवार पहचान पत्र</h3>
+
+    <!-- <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search by Name, Father, Gotr, Village, Mobile..." onkeyup="filterCards()">
+    </div> -->
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="Search by Name, Father, Gotr, Village, Mobile..." onkeyup="filterCards()">
+  
+  <button class="print-btn" onclick="refreshCards()">🔄 Refresh</button>
+  <div id="loader" class="loader" style="display:none;"></div>
+
+
+  
+</div>
+
+
+
+
+
+  </div>
+
+  <div class="card-container" id="cardContainer"></div>
+
+
+</body>
+
+</html>
