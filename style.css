@@ -309,3 +309,30 @@
   100% { transform: rotate(360deg); }
 }
 
+
+
+
+
+.filter-select {
+  padding: 8px 12px;
+  margin: 4px;
+  min-width: 140px;
+  font-size: 14px;
+  border: 2px solid #e65100;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  border-color: #bf360c;
+}
+
+@media (max-width: 768px) {
+  .filter-select {
+    width: 90%;
+    max-width: 300px;
+  }
+}
