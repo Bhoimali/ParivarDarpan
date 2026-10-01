@@ -1,23 +1,3 @@
-  // <script>
-
-
-
-
-
-
-
-// function refreshCards() {
-//   document.getElementById("cardContainer").innerHTML =
-//     "<p style='text-align:center;color:#e65100;'>Updating...</p>";
-
-//   google.script.run.withSuccessHandler((data) => {
-//     renderCards(data);
-//   }).getSheetData();
-// }
-
-
-
-
 
 
 
@@ -53,17 +33,30 @@ function refreshCards() {
 
 
 
-    let allCardsData = [];
-
-
+let allCardsData = [];
 
 // column display se hatanee keliye //
+
 function renderCards(dataObj) {
-  const headers = dataObj.headers.filter(h => 
-    h !== "ID" && h !== "PID" && h !== "Sex" && h !== "Village" && 
-    h !== "Distric" && h !== "Chokala" && h !== "DOB" && 
-    h !== "Email" && h !== "Photo" && h !== "Address" && h !== "Image"  && h !== "Link"
-  ); 
+  const headers = dataObj.headers.filter(h =>
+    h !== "ID" &&
+    h !== "PID" &&
+    h !== "Sex" &&
+    h !== "Village" &&
+    h !== "Distric" &&
+    h !== "Chokala" &&
+    h !== "State" &&
+    h !== "DOB" &&
+    h !== "Email" &&
+    h !== "Photo" &&
+    h !== "Address" &&
+    h !== "Image" &&
+    h !== "Link"
+  );
+
+
+
+
 
   const data = dataObj.json;
   const container = document.getElementById("cardContainer");
@@ -75,12 +68,12 @@ function renderCards(dataObj) {
 
   allCardsData = [];
   let srNo = 1;
-  Object.keys(grouped).forEach(id => {   
+  Object.keys(grouped).forEach(id => {
     const rows = grouped[id];
     const firstRow = rows[0];
     allCardsData.push({ id, firstRow });
-    let photoHTML = firstRow.Photo 
-      ? `<img src="${firstRow.Photo}" alt="Photo">` 
+    let photoHTML = firstRow.Photo
+      ? `<img src="${firstRow.Photo}" alt="Photo">`
       : `<img src="https://via.placeholder.com/90" alt="No Photo">`;
     const topHeader = `
       <div class="top-header">
@@ -105,6 +98,8 @@ function renderCards(dataObj) {
 <div class="card-col" style="flex:0.5; display:flex; justify-content:center; align-items:center;">
   ${photoHTML}
 </div>
+ 
+
 
         
         <div class="card-col" style="flex:1; text-align:left; padding-left:30px;">
@@ -112,15 +107,16 @@ function renderCards(dataObj) {
           <p><b>चौखला: ${firstRow.Chokala}</b></p>
           <p><b>जिला: ${firstRow.Distric}</b></p>
           <p><b>Email: ${firstRow.Email}</b></p>
+           <p><b>राज्य: ${firstRow.State}</b></p>
         </div>
-      </div>
+      </div> 
     `;
     let tableHTML = `<table><tr>`;
     headers.forEach(h => tableHTML += `<th>${h}</th>`);
     tableHTML += `</tr>`;
     rows.forEach(r => {
       tableHTML += `<tr>`;
-      headers.forEach(h => tableHTML += `<td title="${r[h]}">${r[h]}</td>`); 
+      headers.forEach(h => tableHTML += `<td title="${r[h]}">${r[h]}</td>`);
       tableHTML += `</tr>`;
     });
     tableHTML += `</table>`;
@@ -154,8 +150,10 @@ function renderCards(dataObj) {
     srNo++;
   });
 
-    // Cards बनने के बाद ही dropdown options बनेंगे
+  // Cards बनने के बाद ही dropdown options बनेंगे
   createFilterOptions();
+
+  applyFilters();
 
 }
 
@@ -249,6 +247,87 @@ function fillSelect(id, values, defaultText) {
 
 
 
+// function applyFilters() {
+
+//   const state = document.getElementById("stateFilter").value;
+//   const district = document.getElementById("districtFilter").value;
+//   const chokala = document.getElementById("chokalaFilter").value;
+//   const village = document.getElementById("villageFilter").value;
+//   const gotr = document.getElementById("gotrFilter").value;
+
+//   allCardsData.forEach(item => {
+
+//     const id = item.id;
+//     const row = item.firstRow;
+
+//     const card = document.getElementById(`card-${id}`);
+
+//     if (!card) return;
+
+//     const rowState =
+//       row.State ||
+//       row.state ||
+//       row.राज्य ||
+//       "";
+
+//     const rowDistrict =
+//       row.Distric ||
+//       row.District ||
+//       row.district ||
+//       row.जिला ||
+//       "";
+
+//     const rowChokala =
+//       row.Chokala ||
+//       row.chokala ||
+//       row.चौखला ||
+//       "";
+
+//     const rowVillage =
+//       row.Village ||
+//       row.village ||
+//       row.गांव ||
+//       "";
+
+//     const rowGotr =
+//       row.Gotr ||
+//       row.गौत्र ||
+//       "";
+
+//     const matchState =
+//       !state || String(rowState).trim() === state;
+
+//     const matchDistrict =
+//       !district || String(rowDistrict).trim() === district;
+
+//     const matchChokala =
+//       !chokala || String(rowChokala).trim() === chokala;
+
+//     const matchVillage =
+//       !village || String(rowVillage).trim() === village;
+
+//     const matchGotr =
+//       !gotr || String(rowGotr).trim() === gotr;
+
+//     if (
+//       matchState &&
+//       matchDistrict &&
+//       matchChokala &&
+//       matchVillage &&
+//       matchGotr
+//     ) {
+//       card.style.display = "";
+//     } else {
+//       card.style.display = "none";
+//     }
+
+//   });
+
+// }
+
+
+
+
 function applyFilters() {
 
   const state = document.getElementById("stateFilter").value;
@@ -256,6 +335,8 @@ function applyFilters() {
   const chokala = document.getElementById("chokalaFilter").value;
   const village = document.getElementById("villageFilter").value;
   const gotr = document.getElementById("gotrFilter").value;
+
+  let familyCount = 0;
 
   allCardsData.forEach(item => {
 
@@ -318,14 +399,33 @@ function applyFilters() {
       matchVillage &&
       matchGotr
     ) {
+
       card.style.display = "";
+
+      // एक Card = एक परिवार
+      familyCount++;
+
     } else {
+
       card.style.display = "none";
+
     }
 
   });
 
+  // Count दिखाओ
+  const countBox = document.getElementById("filterFamilyCount");
+
+  if (countBox) {
+    countBox.textContent = `कुल परिवार: ${familyCount}`;
+  }
+
 }
+
+
+
+
+
 
 function filterCards() {
   const query = document.getElementById("searchInput").value.toLowerCase().trim();
@@ -342,8 +442,8 @@ function filterCards() {
 
 // ✅ Updated Print Function
 function printCard(cardId) {
-  const colorMode = document.getElementById(`color-${cardId.replace("card-","")}`).value;
-  const orientation = document.getElementById(`orient-${cardId.replace("card-","")}`).value;
+  const colorMode = document.getElementById(`color-${cardId.replace("card-", "")}`).value;
+  const orientation = document.getElementById(`orient-${cardId.replace("card-", "")}`).value;
   const card = document.getElementById(cardId).outerHTML;
 
   const w = window.open('', '', 'width=1000,height=1400');
@@ -388,4 +488,3 @@ function printCard(cardId) {
   `);
   w.document.close();
 }
-  // </script>  
