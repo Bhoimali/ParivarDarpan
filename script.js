@@ -3,26 +3,35 @@
 
 
 function refreshCards() {
+
   const container = document.getElementById("cardContainer");
   const loader = document.getElementById("loader");
 
-  // Loader दिखाओ
   loader.style.display = "block";
-  container.innerHTML = "<p style='text-align:center;color:#e65100;'>Updating...</p>";
   container.style.opacity = "0.4";
 
-  google.script.run.withSuccessHandler((data) => {
-    container.innerHTML = ""; // ✅ पहले पुराना Updating text हटाओ
-    renderCards(data); // डेटा reload होगा ✅
+  google.script.run
+    .withSuccessHandler((data) => {
 
-    // Loader हटाओ
-    loader.style.display = "none";
-    container.style.opacity = "1";
+      renderCards(data);
 
-  }).getSheetData();
+      loader.style.display = "none";
+      container.style.opacity = "1";
+
+    })
+    .withFailureHandler((error) => {
+
+      console.error("Refresh Error:", error);
+
+      loader.style.display = "none";
+      container.style.opacity = "1";
+
+      container.innerHTML =
+        "<p style='text-align:center;color:red;'>Data load नहीं हो सका।</p>";
+
+    })
+    .getSheetData();
 }
-
-
 
 
 
@@ -38,6 +47,7 @@ let allCardsData = [];
 // column display se hatanee keliye //
 
 function renderCards(dataObj) {
+
   const headers = dataObj.headers.filter(h =>
     h !== "ID" &&
     h !== "PID" &&
@@ -51,112 +61,204 @@ function renderCards(dataObj) {
     h !== "Photo" &&
     h !== "Address" &&
     h !== "Image" &&
+    h !== "hi/Mo" &&
     h !== "Link"
   );
 
-
-
-
-
   const data = dataObj.json;
   const container = document.getElementById("cardContainer");
+
   let grouped = {};
+
   data.forEach(row => {
-    if (!grouped[row.PID]) grouped[row.PID] = [];
+
+    if (!grouped[row.PID]) {
+      grouped[row.PID] = [];
+    }
+
     grouped[row.PID].push(row);
+
   });
 
   allCardsData = [];
+
   let srNo = 1;
+
+  // ⭐ पूरा HTML पहले memory में बनाएं
+  let allHTML = "";
+
   Object.keys(grouped).forEach(id => {
+
     const rows = grouped[id];
     const firstRow = rows[0];
-    allCardsData.push({ id, firstRow });
+
+    const privateData = formatPrivateData(firstRow);
+
+    allCardsData.push({
+      id,
+      firstRow
+    });
+
     let photoHTML = firstRow.Photo
       ? `<img src="${firstRow.Photo}" alt="Photo">`
       : `<img src="https://via.placeholder.com/90" alt="No Photo">`;
+
+
     const topHeader = `
       <div class="top-header">
-        <img src="https://res.cloudinary.com/uvnoet8d/image/upload/v1790671878/new_logo_bhoimalisamaj.png">
-        <h2 class="decorative-title-bhoi">भोईमाली समाज राजसमंद</h2>
-        <div class="serial"> ${srNo}</div>
+
+        <img
+          src="https://res.cloudinary.com/uvnoet8d/image/upload/q_auto:best,f_auto,w_450,h_450,c_fit/new_logo_bhoimalisamaj.png"
+          alt="भोईमाली समाज लोगो"
+        >
+
+        <h2 class="decorative-title-bhoi">
+          भोईमाली समाज राजसमंद
+        </h2>
+
+        <div class="serial">${srNo}</div>
+
       </div>
     `;
+
+
     const cardHeader = `
       <div class="card-header">
-        <div class="card-col" style="flex:1.05; padding-right:40px; display:flex; flex-direction:column; align-items:flex-end;">
-        <div style="text-align:left;">
-          <p><b>ID: ${id} </b></p>
-           <h3>${firstRow.नाम}</h3>
-         <p><b>पिताश्री: ${firstRow.पिताश्री}</b></p>
-          
-          <p><b>गौत्र: ${firstRow.गौत्र}</b></p>
-          <p><b>सम्पर्कसुत्र: ${firstRow.सम्पर्कसुत्र}</b></p>
+
+        <div class="card-col"
+             style="flex:1.05;padding-right:40px;display:flex;flex-direction:column;align-items:flex-end;">
+
+          <div style="text-align:left;">
+
+            <p><b>ID: ${id}</b></p>
+
+            <h3>${firstRow.नाम || ""}</h3>
+
+            <p><b>पिताश्री: ${firstRow.पिताश्री || ""}</b></p>
+
+            <p><b>गौत्र: ${firstRow.गौत्र || ""}</b></p>
+
+            <p><b>सम्पर्कसुत्र: ${privateData.mobile}</b></p>
+
+          </div>
+
         </div>
-         </div>
-
-<div class="card-col" style="flex:0.5; display:flex; justify-content:center; align-items:center;">
-  ${photoHTML}
-</div>
- 
 
 
-        
-        <div class="card-col" style="flex:1; text-align:left; padding-left:30px;">
-          <p><b>गांव: ${firstRow.Village}</b></p>
-          <p><b>चौखला: ${firstRow.Chokala}</b></p>
-          <p><b>जिला: ${firstRow.Distric}</b></p>
-          <p><b>Email: ${firstRow.Email}</b></p>
-           <p><b>राज्य: ${firstRow.State}</b></p>
+        <div class="card-col"
+             style="flex:0.5;display:flex;justify-content:center;align-items:center;">
+
+          ${photoHTML}
+
         </div>
-      </div> 
+
+
+        <div class="card-col"
+             style="flex:1;text-align:left;padding-left:30px;">
+
+          <p><b>गांव: ${firstRow.Village || ""}</b></p>
+
+          <p><b>चौखला: ${firstRow.Chokala || ""}</b></p>
+
+          <p><b>जिला: ${firstRow.Distric || ""}</b></p>
+
+          <p><b>Email: ${privateData.email}</b></p>
+
+          <p><b>राज्य: ${firstRow.State || ""}</b></p>
+
+        </div>
+
+      </div>
     `;
+
+
     let tableHTML = `<table><tr>`;
-    headers.forEach(h => tableHTML += `<th>${h}</th>`);
-    tableHTML += `</tr>`;
-    rows.forEach(r => {
-      tableHTML += `<tr>`;
-      headers.forEach(h => tableHTML += `<td title="${r[h]}">${r[h]}</td>`);
-      tableHTML += `</tr>`;
+
+    headers.forEach(h => {
+      tableHTML += `<th>${h}</th>`;
     });
+
+    tableHTML += `</tr>`;
+
+
+    rows.forEach(r => {
+
+      tableHTML += `<tr>`;
+
+      headers.forEach(h => {
+
+        const value = r[h] ?? "";
+
+        tableHTML += `
+          <td title="${String(value).replace(/"/g, '&quot;')}">
+            ${value}
+          </td>
+        `;
+
+      });
+
+      tableHTML += `</tr>`;
+
+    });
+
     tableHTML += `</table>`;
 
-    // 🔽 Dropdowns + Print Button
+
     const printControls = `
       <div class="print-section">
+
         <label>Color:</label>
+
         <select class="print-select" id="color-${id}">
           <option value="color">Color</option>
           <option value="grayscale">Black & White</option>
         </select>
+
         <label>Page:</label>
+
         <select class="print-select" id="orient-${id}">
           <option value="portrait">Portrait</option>
           <option value="landscape">Landscape</option>
         </select>
-        <button class="print-btn" onclick="printCard('card-${id}')">🖨️ Print / PDF</button>
+
+        <button
+          class="print-btn"
+          onclick="printCard('card-${id}')">
+          🖨️ Print / PDF
+        </button>
+
       </div>
     `;
 
-    const cardHTML = `
+
+    allHTML += `
       <div class="id-card" id="card-${id}">
+
         ${topHeader}
+
         ${cardHeader}
+
         ${tableHTML}
+
         ${printControls}
+
       </div>
     `;
-    container.innerHTML += cardHTML;
+
     srNo++;
+
   });
 
-  // Cards बनने के बाद ही dropdown options बनेंगे
-  createFilterOptions();
 
+  // ⭐ DOM को केवल एक बार update करें
+  container.innerHTML = allHTML;
+
+
+  // Filters
+  createFilterOptions();
   applyFilters();
 
 }
-
 
 
 
@@ -244,86 +346,6 @@ function fillSelect(id, values, defaultText) {
     });
 
 }
-
-
-
-// function applyFilters() {
-
-//   const state = document.getElementById("stateFilter").value;
-//   const district = document.getElementById("districtFilter").value;
-//   const chokala = document.getElementById("chokalaFilter").value;
-//   const village = document.getElementById("villageFilter").value;
-//   const gotr = document.getElementById("gotrFilter").value;
-
-//   allCardsData.forEach(item => {
-
-//     const id = item.id;
-//     const row = item.firstRow;
-
-//     const card = document.getElementById(`card-${id}`);
-
-//     if (!card) return;
-
-//     const rowState =
-//       row.State ||
-//       row.state ||
-//       row.राज्य ||
-//       "";
-
-//     const rowDistrict =
-//       row.Distric ||
-//       row.District ||
-//       row.district ||
-//       row.जिला ||
-//       "";
-
-//     const rowChokala =
-//       row.Chokala ||
-//       row.chokala ||
-//       row.चौखला ||
-//       "";
-
-//     const rowVillage =
-//       row.Village ||
-//       row.village ||
-//       row.गांव ||
-//       "";
-
-//     const rowGotr =
-//       row.Gotr ||
-//       row.गौत्र ||
-//       "";
-
-//     const matchState =
-//       !state || String(rowState).trim() === state;
-
-//     const matchDistrict =
-//       !district || String(rowDistrict).trim() === district;
-
-//     const matchChokala =
-//       !chokala || String(rowChokala).trim() === chokala;
-
-//     const matchVillage =
-//       !village || String(rowVillage).trim() === village;
-
-//     const matchGotr =
-//       !gotr || String(rowGotr).trim() === gotr;
-
-//     if (
-//       matchState &&
-//       matchDistrict &&
-//       matchChokala &&
-//       matchVillage &&
-//       matchGotr
-//     ) {
-//       card.style.display = "";
-//     } else {
-//       card.style.display = "none";
-//     }
-
-//   });
-
-// }
 
 
 
@@ -487,4 +509,61 @@ function printCard(cardId) {
     </body></html>
   `);
   w.document.close();
+}
+
+
+
+
+
+function formatPrivateData(row) {
+
+  const privacy = String(row["hi/Mo"] || "").trim().toLowerCase();
+
+  // Mobile
+  const mobile = String(row.सम्पर्कसुत्र || "").trim();
+
+  let mobileDisplay = mobile;
+
+  if (privacy === "yes" && mobile) {
+    if (mobile.length >= 10) {
+     mobileDisplay =
+  mobile.substring(0, 2) +
+  "****" +
+  mobile.substring(mobile.length - 3);
+    } else {
+      mobileDisplay = "*****";
+    }
+  } 
+
+  // Gmail
+  const email = String(row.Email || "").trim();
+
+  let emailDisplay = email;
+
+  if (privacy === "yes" && email) {
+
+    const atPos = email.indexOf("@");
+
+    if (atPos > 0) {
+      const namePart = email.substring(0, atPos);
+      const domainPart = email.substring(atPos);
+
+      if (namePart.length > 3) {
+        emailDisplay =
+          namePart.substring(0, 2) +
+          "******" +
+          namePart.substring(namePart.length - 1) +
+          domainPart;
+      } else {
+        emailDisplay = "****" + domainPart;
+      }
+    } else {
+      emailDisplay = "****";
+    }
+  }
+
+  return {
+    mobile: mobileDisplay,
+    email: emailDisplay
+  };
 }
