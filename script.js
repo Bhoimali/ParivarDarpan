@@ -84,7 +84,7 @@ function renderCards(dataObj) {
       : `<img src="https://via.placeholder.com/90" alt="No Photo">`;
     const topHeader = `
       <div class="top-header">
-        <img src="https://https://res.cloudinary.com/uvnoet8d/image/upload/v1790671878/new_logo_bhoimalisamaj.png">
+        <img src="https://res.cloudinary.com/uvnoet8d/image/upload/v1790671878/new_logo_bhoimalisamaj.png">
         <h2 class="decorative-title-bhoi">भोईमाली समाज राजसमंद</h2>
         <div class="serial"> ${srNo}</div>
       </div>
@@ -153,6 +153,178 @@ function renderCards(dataObj) {
     container.innerHTML += cardHTML;
     srNo++;
   });
+
+    // Cards बनने के बाद ही dropdown options बनेंगे
+  createFilterOptions();
+
+}
+
+
+
+
+function createFilterOptions() {
+
+  const stateSet = new Set();
+  const districtSet = new Set();
+  const chokalaSet = new Set();
+  const villageSet = new Set();
+  const gotrSet = new Set();
+
+  // केवल firstRow से options बनेंगे
+  allCardsData.forEach(item => {
+
+    const row = item.firstRow;
+
+    addValue(stateSet, row.State);
+    addValue(stateSet, row.state);
+    addValue(stateSet, row.राज्य);
+
+    addValue(districtSet, row.Distric);
+    addValue(districtSet, row.District);
+    addValue(districtSet, row.district);
+    addValue(districtSet, row.जिला);
+
+    addValue(chokalaSet, row.Chokala);
+    addValue(chokalaSet, row.chokala);
+    addValue(chokalaSet, row.चौखला);
+
+    addValue(villageSet, row.Village);
+    addValue(villageSet, row.village);
+    addValue(villageSet, row.गांव);
+
+    addValue(gotrSet, row.Gotr);
+    addValue(gotrSet, row.गौत्र);
+
+  });
+
+  fillSelect("stateFilter", stateSet, "सभी राज्य");
+  fillSelect("districtFilter", districtSet, "सभी जिले");
+  fillSelect("chokalaFilter", chokalaSet, "सभी चौखला");
+  fillSelect("villageFilter", villageSet, "सभी गांव");
+  fillSelect("gotrFilter", gotrSet, "सभी गौत्र");
+}
+
+
+function addValue(set, value) {
+
+  if (
+    value !== undefined &&
+    value !== null &&
+    String(value).trim() !== ""
+  ) {
+    set.add(String(value).trim());
+  }
+
+}
+
+
+function fillSelect(id, values, defaultText) {
+
+  const select = document.getElementById(id);
+
+  if (!select) return;
+
+  select.innerHTML = "";
+
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = defaultText;
+
+  select.appendChild(defaultOption);
+
+  [...values]
+    .sort((a, b) => a.localeCompare(b, "hi"))
+    .forEach(value => {
+
+      const option = document.createElement("option");
+
+      option.value = value;
+      option.textContent = value;
+
+      select.appendChild(option);
+
+    });
+
+}
+
+
+
+function applyFilters() {
+
+  const state = document.getElementById("stateFilter").value;
+  const district = document.getElementById("districtFilter").value;
+  const chokala = document.getElementById("chokalaFilter").value;
+  const village = document.getElementById("villageFilter").value;
+  const gotr = document.getElementById("gotrFilter").value;
+
+  allCardsData.forEach(item => {
+
+    const id = item.id;
+    const row = item.firstRow;
+
+    const card = document.getElementById(`card-${id}`);
+
+    if (!card) return;
+
+    const rowState =
+      row.State ||
+      row.state ||
+      row.राज्य ||
+      "";
+
+    const rowDistrict =
+      row.Distric ||
+      row.District ||
+      row.district ||
+      row.जिला ||
+      "";
+
+    const rowChokala =
+      row.Chokala ||
+      row.chokala ||
+      row.चौखला ||
+      "";
+
+    const rowVillage =
+      row.Village ||
+      row.village ||
+      row.गांव ||
+      "";
+
+    const rowGotr =
+      row.Gotr ||
+      row.गौत्र ||
+      "";
+
+    const matchState =
+      !state || String(rowState).trim() === state;
+
+    const matchDistrict =
+      !district || String(rowDistrict).trim() === district;
+
+    const matchChokala =
+      !chokala || String(rowChokala).trim() === chokala;
+
+    const matchVillage =
+      !village || String(rowVillage).trim() === village;
+
+    const matchGotr =
+      !gotr || String(rowGotr).trim() === gotr;
+
+    if (
+      matchState &&
+      matchDistrict &&
+      matchChokala &&
+      matchVillage &&
+      matchGotr
+    ) {
+      card.style.display = "";
+    } else {
+      card.style.display = "none";
+    }
+
+  });
+
 }
 
 function filterCards() {
