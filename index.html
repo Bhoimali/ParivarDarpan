@@ -33,11 +33,43 @@
   
 </div>
 
+<div class="search-box">
 
+  <select id="stateFilter" class="filter-select" onchange="applyFilters()">
+    <option value="">सभी राज्य</option>
+  </select>
+
+  <select id="districtFilter" class="filter-select" onchange="applyFilters()">
+    <option value="">सभी जिले</option>
+  </select>
+
+  <select id="chokalaFilter" class="filter-select" onchange="applyFilters()">
+    <option value="">सभी चौखला</option>
+  </select>
+
+  <select id="villageFilter" class="filter-select" onchange="applyFilters()">
+    <option value="">सभी गांव</option>
+  </select>
+
+  <select id="gotrFilter" class="filter-select" onchange="applyFilters()">
+    <option value="">सभी गौत्र</option>
+  </select>
+
+  <button class="print-btn" onclick="refreshCards()">🔄 Refresh</button>
+
+  <div id="loader" class="loader" style="display:none;"></div>
+
+</div>
 
 
 
   </div>
+
+
+
+
+
+
 
   <div class="card-container" id="cardContainer"></div>
 
