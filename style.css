@@ -52,7 +52,7 @@
 
 
     /* 📱 Only for small screens below 576px */
-     @media (max-width: 992px) {
+     /* @media (max-width: 992px) {
       .card-container {
         transform: scale(0.40);
         gape: 20px;
@@ -61,7 +61,7 @@
         height:100vh;
       }
       
-    } 
+    }  */
 
 
 
@@ -71,10 +71,11 @@
 
 /* बड़ी स्क्रीन / Desktop */
 @media (min-width: 1200px) {
-  .xcard-container {
+  .card-container {
     transform: scale(0.90);
     transform-origin: top center;
-    height: auto;
+    /* height: auto; */
+       height:100vh;
 
        
 
@@ -84,10 +85,11 @@
 
 /* Laptop / छोटी Desktop */
 @media (min-width: 993px) and (max-width: 1199px) {
-  .xcard-container {
+  .card-container {
     transform: scale(0.90);
   transform-origin: top center;
-     height: auto; 
+  /* height: auto; */
+       height:100vh;
 
 
      
@@ -96,10 +98,11 @@
 
 /* Tablet */
 @media (min-width: 768px) and (max-width: 992px) {
-  .xcard-container {
+  .card-container {
     transform: scale(0.80);
     transform-origin: top center;
-     height: auto; 
+     /* height: auto; */
+       height:100vh;
 
 
       
@@ -108,7 +111,7 @@
 
 /* बड़ा Mobile */
 @media (min-width: 576px) and (max-width: 767px) {
-  .xcard-container {
+  .card-container {
     transform: scale(0.60);
     transform-origin: top center;
      height: auto; 
@@ -117,30 +120,33 @@
 
 /* बड़ा Mobile */
 @media (min-width: 468px) and (max-width: 575px) {
-  .xcard-container {
+  .card-container {
     transform: scale(0.50);
     transform-origin: top center;
-    height: auto; 
+      /* height: auto; */
+       height:100vh;
   }
 }
 
 
 /* बड़ा Mobile */
 @media (min-width: 368px) and (max-width: 469px) {
-  .xcard-container {
+  .card-container {
     transform: scale(0.43);
     transform-origin: top center;
-     height: auto; 
+      /* height: auto; */
+       height:100vh;
   }
 }
 
 
 /* बड़ा Mobile */
 @media (min-width: 318px) and (max-width: 367px) {
-  .xcard-container {
+  .card-container {
     transform: scale(0.38);
     transform-origin: top center;
-     height: auto; 
+       /* height: auto; */
+       height:100vh; 
   }
 }
 
@@ -152,10 +158,11 @@
 
 /* छोटा Mobile */
 @media (max-width: 317px) {
-  .xcard-container {
+  .card-container {
     transform: scale(0.32);
     transform-origin: top center;
-    /* height: auto; */
+   /* height: auto; */
+       height:100vh;
   }
 }
 
