@@ -75,6 +75,11 @@
     transform: scale(0.90);
     transform-origin: top center;
     height: auto;
+
+        /* optional – better centering on small screens */
+        height:100vh;
+
+      
   }
 }
 
@@ -82,8 +87,13 @@
 @media (min-width: 993px) and (max-width: 1199px) {
   .card-container {
     transform: scale(0.90);
-    transform-origin: top center;
-    height: auto;
+ 
+    /* height: auto; */
+
+ transform-origin: top center;
+        /* optional – better centering on small screens */
+        height:100vh;
+      
   }
 }
 
@@ -92,7 +102,12 @@
   .card-container {
     transform: scale(0.80);
     transform-origin: top center;
-    height: auto;
+    /* height: auto; */
+
+
+        /* optional – better centering on small screens */
+        height:100vh;
+      
   }
 }
 
@@ -101,7 +116,7 @@
   .card-container {
     transform: scale(0.60);
     transform-origin: top center;
-    height: auto;
+    /* height: auto; */
   }
 }
 
@@ -110,7 +125,7 @@
   .card-container {
     transform: scale(0.50);
     transform-origin: top center;
-    height: auto;
+    /* height: auto; */
   }
 }
 
@@ -120,7 +135,7 @@
   .card-container {
     transform: scale(0.43);
     transform-origin: top center;
-    height: auto;
+    /* height: auto; */
   }
 }
 
@@ -130,7 +145,7 @@
   .card-container {
     transform: scale(0.38);
     transform-origin: top center;
-    height: auto;
+    /* height: auto; */
   }
 }
 
@@ -145,7 +160,7 @@
   .card-container {
     transform: scale(0.32);
     transform-origin: top center;
-    height: auto;
+    /* height: auto; */
   }
 }
 
