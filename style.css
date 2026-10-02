@@ -48,8 +48,11 @@
       transition: transform 0.3s ease;
     }
 
+
+
+
     /* 📱 Only for small screens below 576px */
-    @media (max-width: 992px) {
+    /* @media (max-width: 992px) {
       .card-container {
         transform: scale(0.40);
         gape: 20px;
@@ -58,7 +61,96 @@
         height:100vh;
       }
       
-    }
+    } */
+
+
+
+/* =========================================
+   RESPONSIVE CARD SCALE
+========================================= */
+
+/* बड़ी स्क्रीन / Desktop */
+@media (min-width: 1200px) {
+  .card-container {
+    transform: scale(0.90);
+    transform-origin: top center;
+    height: auto;
+  }
+}
+
+/* Laptop / छोटी Desktop */
+@media (min-width: 993px) and (max-width: 1199px) {
+  .card-container {
+    transform: scale(0.90);
+    transform-origin: top center;
+    height: auto;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 992px) {
+  .card-container {
+    transform: scale(0.80);
+    transform-origin: top center;
+    height: auto;
+  }
+}
+
+/* बड़ा Mobile */
+@media (min-width: 576px) and (max-width: 767px) {
+  .card-container {
+    transform: scale(0.60);
+    transform-origin: top center;
+    height: auto;
+  }
+}
+
+/* बड़ा Mobile */
+@media (min-width: 468px) and (max-width: 575px) {
+  .card-container {
+    transform: scale(0.50);
+    transform-origin: top center;
+    height: auto;
+  }
+}
+
+
+/* बड़ा Mobile */
+@media (min-width: 368px) and (max-width: 469px) {
+  .card-container {
+    transform: scale(0.43);
+    transform-origin: top center;
+    height: auto;
+  }
+}
+
+
+/* बड़ा Mobile */
+@media (min-width: 318px) and (max-width: 367px) {
+  .card-container {
+    transform: scale(0.38);
+    transform-origin: top center;
+    height: auto;
+  }
+}
+
+
+
+
+
+
+
+/* छोटा Mobile */
+@media (max-width: 317px) {
+  .card-container {
+    transform: scale(0.32);
+    transform-origin: top center;
+    height: auto;
+  }
+}
+
+
+
 
 
 
