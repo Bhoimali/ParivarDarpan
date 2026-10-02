@@ -152,7 +152,7 @@
 
 /* छोटा Mobile */
 @media (max-width: 317px) {
-  .card-container {
+  .xcard-container {
     transform: scale(0.32);
     transform-origin: top center;
     /* height: auto; */
