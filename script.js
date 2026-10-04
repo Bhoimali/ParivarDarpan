@@ -62,6 +62,8 @@ function renderCards(dataObj) {
     h !== "Address" &&
     h !== "Image" &&
     h !== "Hi/Mo" &&
+    h !== "Hi/Ph" &&
+    h !== "OurInfo" &&
     h !== "Link"
   );
 
