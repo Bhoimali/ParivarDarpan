@@ -520,7 +520,7 @@ function printCard(cardId) {
 
 function formatPrivateData(row) {
 
-  const privacy = String(row["hi/Mo"] || "").trim().toLowerCase();
+  const privacy = String(row["Hi/Mo"] || "").trim().toLowerCase();
 
   // Mobile
   const mobile = String(row.सम्पर्कसुत्र || "").trim();
