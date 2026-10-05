@@ -1,16 +1,20 @@
 
 
 
-
 function refreshCards() {
 
-  const container = document.getElementById("cardContainer");
-  const loader = document.getElementById("loader");
+  const container =
+    document.getElementById("cardContainer");
+
+  const loader =
+    document.getElementById("loader");
 
   loader.style.display = "block";
   container.style.opacity = "0.4";
 
+
   google.script.run
+
     .withSuccessHandler((data) => {
 
       renderCards(data);
@@ -19,9 +23,13 @@ function refreshCards() {
       container.style.opacity = "1";
 
     })
+
     .withFailureHandler((error) => {
 
-      console.error("Refresh Error:", error);
+      console.error(
+        "Refresh Error:",
+        error
+      );
 
       loader.style.display = "none";
       container.style.opacity = "1";
@@ -30,10 +38,10 @@ function refreshCards() {
         "<p style='text-align:center;color:red;'>Data load नहीं हो सका।</p>";
 
     })
+
     .getSheetData();
+
 }
-
-
 
 
 
@@ -44,9 +52,16 @@ function refreshCards() {
 
 let allCardsData = [];
 
-// column display se hatanee keliye //
+
+// =========================================
+// RENDER CARDS
+// =========================================
 
 function renderCards(dataObj) {
+
+  // =========================================
+  // COLUMN DISPLAY SE HATANE KE LIYE
+  // =========================================
 
   const headers = dataObj.headers.filter(h =>
     h !== "ID" &&
@@ -64,204 +79,364 @@ function renderCards(dataObj) {
     h !== "Hi/Mo" &&
     h !== "Hi/Ph" &&
     h !== "OurInfo" &&
-     h !== "" &&
+    h !== "" &&
     h !== "Link"
   );
 
   const data = dataObj.json;
-  const container = document.getElementById("cardContainer");
 
-  let grouped = {};
+  const container =
+    document.getElementById("cardContainer");
 
-  data.forEach(row => {
+let grouped = {};
 
-    if (!grouped[row.PID]) {
-      grouped[row.PID] = [];
-    }
+data.forEach(row => {
 
-    grouped[row.PID].push(row);
+  if (!grouped[row.PID]) {
+    grouped[row.PID] = [];
+  }
+
+  grouped[row.PID].push(row);
+
+});
+
+allCardsData = [];
+
+let srNo = 1;
+
+// पूरा HTML पहले memory में बनाएं
+let allHTML = "";
+
+Object.keys(grouped).forEach(id => {
+
+  const rows = grouped[id];
+  const firstRow = rows[0];
+
+  const privateData = formatPrivateData(firstRow);
+
+  allCardsData.push({
+    id,
+    firstRow
+  });
+
+
+  // =========================================
+  // PHOTO PRIVACY - Hi/Ph
+  //
+  // Yes = PHOTO CLEAR
+  // No  = PHOTO BLUR
+  // =========================================
+
+  const photoPrivacy =
+    String(firstRow["Hi/Ph"] || "")
+      .trim()
+      .toLowerCase();
+
+  let photoHTML = "";
+
+  if (firstRow.Photo) {
+
+    const photoStyle =
+      photoPrivacy === "yes"
+        ? ""
+        : "filter:blur(2px);";
+
+    photoHTML = `
+      <img
+        src="${firstRow.Photo}"
+        alt="Photo"
+        style="
+          ${photoStyle}
+          width:90px;
+          height:90px;
+          object-fit:cover;
+          border-radius:50%;
+          border:3px solid #e65100;
+          transition:filter 0.3s ease;
+        "
+      >
+    `;
+
+  } else {
+
+    photoHTML = `
+      <img
+        src="https://via.placeholder.com/90"
+        alt="No Photo"
+        style="
+          width:90px;
+          height:90px;
+          object-fit:cover;
+          border-radius:50%;
+          border:3px solid #e65100;
+        "
+      >
+    `;
+
+  }
+
+
+  // =========================================
+  // TOP HEADER
+  // =========================================
+
+  const topHeader = `
+    <div class="top-header">
+
+      <img
+        src="https://res.cloudinary.com/uvnoet8d/image/upload/q_auto:best,f_auto,w_450,h_450,c_fit/new_logo_bhoimalisamaj.png"
+        alt="भोईमाली समाज लोगो"
+      >
+
+      <h2 class="decorative-title-bhoi">
+        भोईमाली समाज राजसमंद
+      </h2>
+
+      <div class="serial">${srNo}</div>
+
+    </div>
+  `;
+
+
+  // =========================================
+  // CARD HEADER
+  // =========================================
+
+  const cardHeader = `
+    <div class="card-header">
+
+      <div
+        class="card-col"
+        style="
+          flex:1.05;
+          padding-right:40px;
+          display:flex;
+          flex-direction:column;
+          align-items:flex-end;
+        "
+      >
+
+        <div style="text-align:left;">
+
+          <p><b>ID: ${id}</b></p>
+
+          <h3>${firstRow.नाम || ""}</h3>
+
+          <p>
+            <b>पिताश्री: ${firstRow.पिताश्री || ""}</b>
+          </p>
+
+          <p>
+            <b>गौत्र: ${firstRow.गौत्र || ""}</b>
+          </p>
+
+          <p>
+            <b>सम्पर्कसुत्र: ${privateData.mobile}</b>
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="card-col"
+        style="
+          flex:0.5;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+        "
+      >
+
+        ${photoHTML}
+
+      </div>
+
+
+      <div
+        class="card-col"
+        style="
+          flex:1;
+          text-align:left;
+          padding-left:30px;
+        "
+      >
+
+        <p>
+          <b>गांव: ${firstRow.Village || ""}</b>
+        </p>
+
+        <p>
+          <b>चौखला: ${firstRow.Chokala || ""}</b>
+        </p>
+
+        <p>
+          <b>जिला: ${firstRow.Distric || ""}</b>
+        </p>
+
+        <p>
+          <b>Email: ${privateData.email}</b>
+        </p>
+
+        <p>
+          <b>राज्य: ${firstRow.State || ""}</b>
+        </p>
+
+      </div>
+
+    </div>
+  `;
+
+
+  // =========================================
+  // TABLE
+  // =========================================
+
+  let tableHTML = `<table><tr>`;
+
+  headers.forEach(h => {
+
+    tableHTML += `<th>${h}</th>`;
 
   });
 
-  allCardsData = [];
-
-  let srNo = 1;
-
-  // ⭐ पूरा HTML पहले memory में बनाएं
-  let allHTML = "";
-
-  Object.keys(grouped).forEach(id => {
-
-    const rows = grouped[id];
-    const firstRow = rows[0];
-
-    const privateData = formatPrivateData(firstRow);
-
-    allCardsData.push({
-      id,
-      firstRow
-    });
-
-    let photoHTML = firstRow.Photo
-      ? `<img src="${firstRow.Photo}" alt="Photo">`
-      : `<img src="https://via.placeholder.com/90" alt="No Photo">`;
+  tableHTML += `</tr>`;
 
 
-    const topHeader = `
-      <div class="top-header">
+  rows.forEach(r => {
 
-        <img
-          src="https://res.cloudinary.com/uvnoet8d/image/upload/q_auto:best,f_auto,w_450,h_450,c_fit/new_logo_bhoimalisamaj.png"
-          alt="भोईमाली समाज लोगो"
-        >
-
-        <h2 class="decorative-title-bhoi">
-          भोईमाली समाज राजसमंद
-        </h2>
-
-        <div class="serial">${srNo}</div>
-
-      </div>
-    `;
-
-
-    const cardHeader = `
-      <div class="card-header">
-
-        <div class="card-col"
-             style="flex:1.05;padding-right:40px;display:flex;flex-direction:column;align-items:flex-end;">
-
-          <div style="text-align:left;">
-
-            <p><b>ID: ${id}</b></p>
-
-            <h3>${firstRow.नाम || ""}</h3>
-
-            <p><b>पिताश्री: ${firstRow.पिताश्री || ""}</b></p>
-
-            <p><b>गौत्र: ${firstRow.गौत्र || ""}</b></p>
-
-            <p><b>सम्पर्कसुत्र: ${privateData.mobile}</b></p>
-
-          </div>
-
-        </div>
-
-
-        <div class="card-col"
-             style="flex:0.5;display:flex;justify-content:center;align-items:center;">
-
-          ${photoHTML}
-
-        </div>
-
-
-        <div class="card-col"
-             style="flex:1;text-align:left;padding-left:30px;">
-
-          <p><b>गांव: ${firstRow.Village || ""}</b></p>
-
-          <p><b>चौखला: ${firstRow.Chokala || ""}</b></p>
-
-          <p><b>जिला: ${firstRow.Distric || ""}</b></p>
-
-          <p><b>Email: ${privateData.email}</b></p>
-
-          <p><b>राज्य: ${firstRow.State || ""}</b></p>
-
-        </div>
-
-      </div>
-    `;
-
-
-    let tableHTML = `<table><tr>`;
+    tableHTML += `<tr>`;
 
     headers.forEach(h => {
-      tableHTML += `<th>${h}</th>`;
+
+      let value = r[h] ?? "";
+
+
+      // =========================================
+      // TABLE में संपर्क सूत्र
+      // Hi/Mo = Yes
+      // Yes → पूरा Mobile
+      // No  → 91***1234
+      // =========================================
+
+      if (
+        h === "सम्पर्कसुत्र" ||
+        h === "सम्पर्क सूत्र"
+      ) {
+
+        value = formatPrivateData(r).mobile;
+
+      }
+
+
+      tableHTML += `
+        <td
+          title="${String(value).replace(/"/g, '&quot;')}"
+        >
+          ${value}
+        </td>
+      `;
+
     });
 
     tableHTML += `</tr>`;
 
-
-    rows.forEach(r => {
-
-      tableHTML += `<tr>`;
-
-      headers.forEach(h => {
-
-        const value = r[h] ?? "";
-
-        tableHTML += `
-          <td title="${String(value).replace(/"/g, '&quot;')}">
-            ${value}
-          </td>
-        `;
-
-      });
-
-      tableHTML += `</tr>`;
-
-    });
-
-    tableHTML += `</table>`;
-
-
-    const printControls = `
-      <div class="print-section">
-
-        <label>Color:</label>
-
-        <select class="print-select" id="color-${id}">
-          <option value="color">Color</option>
-          <option value="grayscale">Black & White</option>
-        </select>
-
-        <label>Page:</label>
-
-        <select class="print-select" id="orient-${id}">
-          <option value="portrait">Portrait</option>
-          <option value="landscape">Landscape</option>
-        </select>
-
-        <button
-          class="print-btn"
-          onclick="printCard('card-${id}')">
-          🖨️ Print / PDF
-        </button>
-
-      </div>
-    `;
-
-
-    allHTML += `
-      <div class="id-card" id="card-${id}">
-
-        ${topHeader}
-
-        ${cardHeader}
-
-        ${tableHTML}
-
-        ${printControls}
-
-      </div>
-    `;
-
-    srNo++;
-
   });
 
-
-  // ⭐ DOM को केवल एक बार update करें
-  container.innerHTML = allHTML;
+  tableHTML += `</table>`;
 
 
-  // Filters
-  createFilterOptions();
-  applyFilters();
+  // =========================================
+  // PRINT CONTROLS
+  // =========================================
 
+  const printControls = `
+    <div class="print-section">
+
+      <label>Color:</label>
+
+      <select
+        class="print-select"
+        id="color-${id}"
+      >
+        <option value="color">
+          Color
+        </option>
+
+        <option value="grayscale">
+          Black & White
+        </option>
+
+      </select>
+
+
+      <label>Page:</label>
+
+      <select
+        class="print-select"
+        id="orient-${id}"
+      >
+        <option value="portrait">
+          Portrait
+        </option>
+
+        <option value="landscape">
+          Landscape
+        </option>
+
+      </select>
+
+
+      <button
+        class="print-btn"
+        onclick="printCard('card-${id}')"
+      >
+        🖨️ Print / PDF
+      </button>
+
+    </div>
+  `;
+
+
+  // =========================================
+  // COMPLETE CARD
+  // =========================================
+
+  allHTML += `
+    <div
+      class="id-card"
+      id="card-${id}"
+    >
+
+      ${topHeader}
+
+      ${cardHeader}
+
+      ${tableHTML}
+
+      ${printControls}
+
+    </div>
+  `;
+
+  srNo++;
+
+});
+
+
+// =========================================
+// DOM केवल एक बार UPDATE
+// =========================================
+
+container.innerHTML = allHTML;
+
+// Filters
+createFilterOptions();
+applyFilters();
 }
+
+
 
 
 
@@ -517,56 +692,123 @@ function printCard(cardId) {
 
 
 
+// =========================================
+// PRIVATE DATA FORMAT
+//
+// Hi/Mo:
+// Yes = पूरा Mobile + पूरा Email
+// No  = Mobile Mask + Email Mask
+//
+// Mobile No example:
+// Yes → 919876543210
+// No  → 91***1234
+// =========================================
 
 function formatPrivateData(row) {
 
-  const privacy = String(row["Hi/Mo"] || "").trim().toLowerCase();
+  // =========================================
+  // Hi/Mo COLUMN
+  // =========================================
 
-  // Mobile
-  const mobile = String(row.सम्पर्कसुत्र || "").trim();
+  const privacy =
+    String(row["Hi/Mo"] || "")
+      .trim()
+      .toLowerCase();
+
+
+  // =========================================
+  // MOBILE
+  // =========================================
+
+  const mobile =
+    String(row.सम्पर्कसुत्र || "").trim();
 
   let mobileDisplay = mobile;
 
-  if (privacy === "yes" && mobile) {
-    if (mobile.length >= 10) {
-     mobileDisplay =
-  mobile.substring(0, 2) +
-  "****" +
-  mobile.substring(mobile.length - 3);
-    } else {
-      mobileDisplay = "*****";
-    }
-  } 
 
-  // Gmail
-  const email = String(row.Email || "").trim();
+  // -----------------------------------------
+  // Yes = पूरा Mobile दिखे
+  // No  = Mask
+  // -----------------------------------------
+
+  if (privacy !== "yes" && mobile) {
+
+    // केवल digits रखें
+    const digits = mobile.replace(/\D/g, "");
+
+    if (digits.length >= 10) {
+
+      // Last 10 digit को Indian mobile मानकर
+      // 91 + *** + last 4
+      const last10 = digits.slice(-10);
+
+      mobileDisplay =
+        "91***" +
+        last10.slice(-4);
+
+    } else {
+
+      mobileDisplay = "91***1234";
+
+    }
+
+  }
+
+
+  // =========================================
+  // EMAIL
+  // =========================================
+
+  const email =
+    String(row.Email || "").trim();
 
   let emailDisplay = email;
 
-  if (privacy === "yes" && email) {
+
+  // -----------------------------------------
+  // No = Email Mask
+  // Yes = पूरा Email
+  // -----------------------------------------
+
+  if (privacy !== "yes" && email) {
 
     const atPos = email.indexOf("@");
 
     if (atPos > 0) {
-      const namePart = email.substring(0, atPos);
-      const domainPart = email.substring(atPos);
+
+      const namePart =
+        email.substring(0, atPos);
+
+      const domainPart =
+        email.substring(atPos);
 
       if (namePart.length > 3) {
+
         emailDisplay =
           namePart.substring(0, 2) +
-          "******" +
-          namePart.substring(namePart.length - 1) +
+          "***" +
           domainPart;
+
       } else {
-        emailDisplay = "****" + domainPart;
+
+        emailDisplay =
+          "***" +
+          domainPart;
+
       }
+
     } else {
-      emailDisplay = "****";
+
+      emailDisplay = "***";
+
     }
+
   }
+
 
   return {
     mobile: mobileDisplay,
     email: emailDisplay
   };
+
 }
