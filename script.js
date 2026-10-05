@@ -732,28 +732,18 @@ function formatPrivateData(row) {
   // -----------------------------------------
 
   if (privacy !== "yes" && mobile) {
+  const digits = mobile.replace(/\D/g, "");
 
-    // केवल digits रखें
-    const digits = mobile.replace(/\D/g, "");
+  if (digits.length >= 10) {
+    const last10 = digits.slice(-10);
 
-    if (digits.length >= 10) {
-
-      // Last 10 digit को Indian mobile मानकर
-      // 91 + *** + last 4
-      const last10 = digits.slice(-10);
-
-      mobileDisplay =
-        "91***" +
-        last10.slice(-4);
-
-    } else {
-
-      mobileDisplay = "91***1234";
-
-    }
-
+    mobileDisplay =
+      "91*****" +
+      last10.slice(-3);
+  } else {
+    mobileDisplay = "91*****123";
   }
-
+}
 
   // =========================================
   // EMAIL
@@ -786,20 +776,20 @@ function formatPrivateData(row) {
 
         emailDisplay =
           namePart.substring(0, 2) +
-          "***" +
+          "****" +
           domainPart;
 
       } else {
 
         emailDisplay =
-          "***" +
+          "****" +
           domainPart;
 
       }
-
+    
     } else {
 
-      emailDisplay = "***";
+      emailDisplay = "****";
 
     }
 
