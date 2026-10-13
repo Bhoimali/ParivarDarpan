@@ -79,7 +79,7 @@ function renderCards(dataObj) {
     h !== "Hi/Mo" &&
     h !== "Hi/Ph" &&
     h !== "OurInfo" &&
-    h !== "" &&
+    h !== "Pub-Web" &&
     h !== "Link"
   );
 
@@ -111,6 +111,45 @@ Object.keys(grouped).forEach(id => {
 
   const rows = grouped[id];
   const firstRow = rows[0];
+  
+  // Comun Sheet W Column - Card Privacy
+  // W = Column 23 (1-based)
+  // JSON object mein key header ke naam par depend karegi
+
+  const cardPrivacy = String(
+    firstRow["W"] ||
+    firstRow["CardPrivacy"] ||
+    firstRow["Pub-Web"] ||
+    ""
+  ).trim().toLowerCase();
+
+  const showFullCard = cardPrivacy === "yes";
+
+  // No hone par sensitive details hide hongi
+
+
+function hideCardData(value) {
+
+  if (showFullCard) {
+    return value ?? "";
+  }
+
+  const text = String(value ?? "").trim();
+
+  if (!text) return "";
+
+  // 6 या उससे कम अक्षर होने पर पूरी जानकारी छिपाएँ
+  if (text.length <= 6) {
+    return "...";
+  }
+
+  // पहले 3 और आखिरी 3 अक्षर दिखाएँ
+  return text.substring(0, 3) +
+         "..." +
+         text.substring(text.length - 3);
+}
+
+
 
   const privateData = formatPrivateData(firstRow);
 
@@ -127,53 +166,45 @@ Object.keys(grouped).forEach(id => {
   // No  = PHOTO BLUR
   // =========================================
 
-  const photoPrivacy =
-    String(firstRow["Hi/Ph"] || "")
-      .trim()
-      .toLowerCase();
+ 
+let photoHTML = "";
 
-  let photoHTML = "";
+if (firstRow.Photo) {
+  const photoStyle = showFullCard ? "" : "filter:blur(5px);";
 
-  if (firstRow.Photo) {
+  photoHTML = `
+    <img
+      src="${firstRow.Photo}"
+      alt="Photo"
+      draggable="false"
+      oncontextmenu="return false"
+      ondragstart="return false"
+      style="
+        ${photoStyle}
+        width:90px;
+        height:90px;
+        object-fit:cover;
+        border-radius:50%;
+        border:3px solid #e65100;
+        user-select:none;
+        -webkit-user-select:none;
+        -webkit-touch-callout:none;
+        pointer-events:auto;
+      "
+    >
+  `;
+} else {
+  photoHTML = `
+    <img
+      src="https://via.placeholder.com/90"
+      alt="No Photo"
+      draggable="false"
+      oncontextmenu="return false"
+      style="width:90px;height:90px;object-fit:cover;border-radius:50%;"
+    >
+  `;
+}
 
-    const photoStyle =
-      photoPrivacy === "yes"
-        ? ""
-        : "filter:blur(2px);";
-
-    photoHTML = `
-      <img
-        src="${firstRow.Photo}"
-        alt="Photo"
-        style="
-          ${photoStyle}
-          width:90px;
-          height:90px;
-          object-fit:cover;
-          border-radius:50%;
-          border:3px solid #e65100;
-          transition:filter 0.3s ease;
-        "
-      >
-    `;
-
-  } else {
-
-    photoHTML = `
-      <img
-        src="https://via.placeholder.com/90"
-        alt="No Photo"
-        style="
-          width:90px;
-          height:90px;
-          object-fit:cover;
-          border-radius:50%;
-          border:3px solid #e65100;
-        "
-      >
-    `;
-
-  }
 
 
   // =========================================
@@ -222,17 +253,17 @@ Object.keys(grouped).forEach(id => {
 
           <h3>${firstRow.नाम || ""}</h3>
 
-          <p>
-            <b>पिताश्री: ${firstRow.पिताश्री || ""}</b>
-          </p>
+          
+          <p><b>पिताश्री: ${hideCardData(firstRow.पिताश्री)}</b></p>
+          
 
-          <p>
-            <b>गौत्र: ${firstRow.गौत्र || ""}</b>
-          </p>
+          
+          <p><b>गौत्र: ${hideCardData(firstRow.गौत्र)}</b></p>
+          
 
-          <p>
-            <b>सम्पर्कसुत्र: ${privateData.mobile}</b>
-          </p>
+          
+          <p><b>सम्पर्कसुत्र: ${hideCardData(privateData.mobile)}</b></p>
+          
 
         </div>
 
@@ -304,45 +335,52 @@ Object.keys(grouped).forEach(id => {
   tableHTML += `</tr>`;
 
 
-  rows.forEach(r => {
 
-    tableHTML += `<tr>`;
+rows.forEach(r => {
 
-    headers.forEach(h => {
+  tableHTML += `<tr>`;
 
-      let value = r[h] ?? "";
+  headers.forEach(h => {
 
+    let value = r[h] ?? "";
 
-      // =========================================
-      // TABLE में संपर्क सूत्र
-      // Hi/Mo = Yes
-      // Yes → पूरा Mobile
-      // No  → 91***1234
-      // =========================================
+    // संपर्क सूत्र की Privacy
+    if (
+      h === "सम्पर्कसुत्र" ||
+      h === "सम्पर्क सूत्र"
+    ) {
+      value = formatPrivateData(r).mobile;
+    }
 
-      if (
-        h === "सम्पर्कसुत्र" ||
-        h === "सम्पर्क सूत्र"
-      ) {
+    // W Column में No होने पर
+    if (!showFullCard) {
 
-        value = formatPrivateData(r).mobile;
+      // केवल क्रम संख्या पूरी दिखे
+      const isSerialNumber = [
+        "S/N",
+        "SN",
+        "क्रम संख्या",
+        "क्रमांक",
+        "क्र.सं."
+      ].includes(String(h).trim());
 
+      if (!isSerialNumber) {
+        value = hideCardData(value);
       }
+    }
 
-
-      tableHTML += `
-        <td
-          title="${String(value).replace(/"/g, '&quot;')}"
-        >
-          ${value}
-        </td>
-      `;
-
-    });
-
-    tableHTML += `</tr>`;
+    tableHTML += `
+      <td title="${String(value).replace(/"/g, '&quot;')}">
+        ${value}
+      </td>
+    `;
 
   });
+
+  tableHTML += `</tr>`;
+
+});
+
 
   tableHTML += `</table>`;
 
@@ -435,6 +473,38 @@ container.innerHTML = allHTML;
 createFilterOptions();
 applyFilters();
 }
+
+
+
+
+
+
+(function protectCardImages() {
+
+  const container = document.getElementById("cardContainer");
+  if (!container) return;
+
+  // Right-click / context menu रोकें
+  ["contextmenu", "dragstart"].forEach(function(eventName) {
+    container.addEventListener(eventName, function(e) {
+      if (e.target.closest("img")) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  });
+
+  // मोबाइल पर फोटो का long-press menu रोकने में मदद
+  container.addEventListener("touchstart", function(e) {
+    if (e.target.closest("img")) {
+      e.target.closest("img").style.webkitTouchCallout = "none";
+    }
+  }, { passive: true });
+
+})();
+
+
+
 
 
 
@@ -802,3 +872,10 @@ function formatPrivateData(row) {
   };
 
 }
+
+
+
+
+
+
+
