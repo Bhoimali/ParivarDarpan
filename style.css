@@ -295,10 +295,17 @@ td {
    /* xxfont-weight: 600;        थोड़ा bold */
 }
 
-
+/* 
 td {
   color: #000;
    font-weight: 400; 
+} */
+
+
+
+td {
+  color: #000000;
+  font-weight: 600;
 }
 
 
@@ -564,3 +571,56 @@ th:last-child {
   pointer-events: auto;
 }
 
+
+
+
+
+
+/* कार्ड के नीचे हिंदी अस्वीकरण */
+.card-disclaimer {
+  display: table;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 12px auto 0;
+  padding: 4px 8px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #ff4400;
+  background: #fff8f0;
+  border: 1px solid #e65100;
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* मोबाइल स्क्रीन */
+@media screen and (max-width: 600px) {
+  .card-disclaimer {
+    font-size: 11px;
+    padding: 4px 6px;
+    line-height: 1.6;
+  }
+}
+
+/* प्रिंट और PDF */
+@media print {
+  .xcard-disclaimer {
+    display: table !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: center;
+    color: #000 !important;
+    background: #fff !important;
+    border: 1px solid #777;
+    padding: 4px 8px;
+    margin: 10px auto 0;
+    overflow-wrap: anywhere;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
