@@ -381,7 +381,6 @@ rows.forEach(r => {
 
 });
 
-
   tableHTML += `</table>`;
 
 
@@ -437,26 +436,34 @@ rows.forEach(r => {
   `;
 
 
-  // =========================================
-  // COMPLETE CARD
-  // =========================================
+  
+// =========================================
+// COMPLETE CARD + DISCLAIMER
+// =========================================
 
-  allHTML += `
-    <div
-      class="id-card"
-      id="card-${id}"
-    >
+allHTML += `
+  <div
+    class="id-card"
+    id="card-${id}"
+  >
 
-      ${topHeader}
+    ${topHeader}
 
-      ${cardHeader}
+    ${cardHeader}
 
-      ${tableHTML}
+    ${tableHTML}
 
-      ${printControls}
-
+    <!-- अस्वीकरण -->
+    <div class="card-disclaimer">
+      अस्वीकरण: इस कार्ड में दी गई जानकारी केवल सामान्य परिचय एवं सामाजिक उपयोग के लिए है।<br>
+  इसे किसी भी न्यायालय, सरकारी विभाग अथवा अन्य स्थान पर साक्ष्य के रूप में प्रस्तुत नहीं किया जा सकता।
     </div>
-  `;
+
+    ${printControls}
+
+  </div>
+`;
+
 
   srNo++;
 
@@ -718,7 +725,11 @@ function printCard(cardId) {
 
   const w = window.open('', '', 'width=1000,height=1400');
   w.document.write(`
-    <html><head><title>Print Preview</title>
+    <html>
+       <head>
+   
+     <title>BhoiMali-${cardId.replace("card-", "")}</title>
+
     <style>
       @page { size: ${orientation} Letter; margin: 10mm; }
       body {
@@ -745,12 +756,38 @@ function printCard(cardId) {
       .card-col img{width:90px;height:90px;border-radius:50%;border:3px solid #e65100;object-fit:cover;margin:auto;display:block;}
       .card-col h3{margin:0;font-size:16px;font-weight:bold;color:#d84315;}
       .card-col p{margin:2px 0;font-size:13px;}
+
       table{width:100%;border-collapse:collapse;text-align:center;}
+
       th,td{border:1px solid #bf360c;padding:6px;font-size:13px;text-align:center;}
+
       th{background:${colorMode === "color" ? "#ff6f00" : "#444"};color:#fff;}
       .print-section{display:none;}
+
       *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+
+
+
+      .card-disclaimer {
+    display: table !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: center;
+    color: #000 !important;
+    background: #fff !important;
+    border: 1px solid #777;
+    padding: 4px 8px;
+    margin: 10px auto 0;
+    overflow-wrap: anywhere;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
     </style>
+
     </head>
     <body onload="window.print()">
       <div class="print-wrapper">${card}</div>
