@@ -76,8 +76,8 @@ function renderCards(dataObj) {
     h !== "Photo" &&
     h !== "Address" &&
     h !== "Image" &&
-    h !== "Hi/Mo" &&
-    h !== "Hi/Ph" &&
+    h !== "Pub-Mo" &&
+    h !== "Pub-Ph" &&
     h !== "OurInfo" &&
     h !== "Pub-Web" &&
     h !== "Link"
@@ -116,39 +116,46 @@ Object.keys(grouped).forEach(id => {
   // W = Column 23 (1-based)
   // JSON object mein key header ke naam par depend karegi
 
-  const cardPrivacy = String(
-    firstRow["W"] ||
-    firstRow["CardPrivacy"] ||
-    firstRow["Pub-Web"] ||
-    ""
+ 
+  // =========================================
+  // PRIVACY: W = Pub-Web, X = Pub-Mo, Y = Pub-Ph
+  // =========================================
+
+  const webPrivacy = String(
+    firstRow["Pub-Web"] || firstRow["W"] || ""
   ).trim().toLowerCase();
 
-  const showFullCard = cardPrivacy === "yes";
+  const mobilePrivacy = String(
+    firstRow["Pub-Mo"] || firstRow["X"] || ""
+  ).trim().toLowerCase();
 
-  // No hone par sensitive details hide hongi
+  const photoPrivacy = String(
+    firstRow["Pub-Ph"] || firstRow["Y"] || ""
+  ).trim().toLowerCase();
 
+  const showFullCard = webPrivacy === "yes";
+  const showMobile = showFullCard && mobilePrivacy === "yes";
+  const showPhoto = showFullCard && photoPrivacy === "yes";
+
+  // Pub-Web = No होने पर सभी कार्ड विवरण छिपेंगे
+  // function hideCardData(value) {
+  //   if (!showFullCard) return "••••••";
+  //   return value ?? "";
+  // }
+
+
+  
 
 function hideCardData(value) {
-
-  if (showFullCard) {
-    return value ?? "";
-  }
-
   const text = String(value ?? "").trim();
 
   if (!text) return "";
+  if (text.length <= 5) return text;
 
-  // 6 या उससे कम अक्षर होने पर पूरी जानकारी छिपाएँ
-  if (text.length <= 6) {
-    return "...";
-  }
-
-  // पहले 3 और आखिरी 3 अक्षर दिखाएँ
-  return text.substring(0, 3) +
-         "..." +
-         text.substring(text.length - 3);
+  return text.slice(0, 2) +
+         "•••••" +
+         text.slice(-3);
 }
-
 
 
   const privateData = formatPrivateData(firstRow);
@@ -160,7 +167,7 @@ function hideCardData(value) {
 
 
   // =========================================
-  // PHOTO PRIVACY - Hi/Ph
+  // PHOTO PRIVACY - Pub-Ph
   //
   // Yes = PHOTO CLEAR
   // No  = PHOTO BLUR
@@ -170,7 +177,7 @@ function hideCardData(value) {
 let photoHTML = "";
 
 if (firstRow.Photo) {
-  const photoStyle = showFullCard ? "" : "filter:blur(5px);";
+  const photoStyle = showPhoto ? "" : "filter:blur(5px);";
 
   photoHTML = `
     <img
@@ -233,91 +240,95 @@ if (firstRow.Photo) {
   // CARD HEADER
   // =========================================
 
-  const cardHeader = `
-    <div class="card-header">
 
-      <div
-        class="card-col"
-        style="
-          flex:1.05;
-          padding-right:40px;
-          display:flex;
-          flex-direction:column;
-          align-items:flex-end;
-        "
-      >
+const cardHeader = `
+  <div class="card-header">
 
-        <div style="text-align:left;">
+    <div
+      class="card-col"
+      style="
+        flex:1.05;
+        padding-right:40px;
+        display:flex;
+        flex-direction:column;
+        align-items:flex-end;
+      "
+    >
+      <div style="text-align:left;">
 
-          <p><b>ID: ${id}</b></p>
+        <p><b>ID: ${id}</b></p>
 
-          <h3>${firstRow.नाम || ""}</h3>
+        <h3>${firstRow.नाम || ""}</h3>
 
-          
-          <p><b>पिताश्री: ${hideCardData(firstRow.पिताश्री)}</b></p>
-          
+        <p><b>पिताश्री: ${
+          showFullCard
+            ? (firstRow.पिताश्री || "")
+            : hideCardData(firstRow.पिताश्री)
+        }</b></p>
 
-          
-          <p><b>गौत्र: ${hideCardData(firstRow.गौत्र)}</b></p>
-          
+        <p><b>गौत्र: ${
+          showFullCard
+            ? (firstRow.गौत्र || "")
+            : hideCardData(firstRow.गौत्र)
+        }</b></p>
 
-          
-          <p><b>सम्पर्कसुत्र: ${hideCardData(privateData.mobile)}</b></p>
-          
-
-        </div>
-
-      </div>
-
-
-      <div
-        class="card-col"
-        style="
-          flex:0.5;
-          display:flex;
-          justify-content:center;
-          align-items:center;
-        "
-      >
-
-        ${photoHTML}
+        <p><b>सम्पर्कसुत्र: ${privateData.mobile}</b></p>
 
       </div>
+    </div>
 
+    <div
+      class="card-col"
+      style="
+        flex:0.5;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+      "
+    >
+      ${photoHTML}
+    </div>
 
-      <div
-        class="card-col"
-        style="
-          flex:1;
-          text-align:left;
-          padding-left:30px;
-        "
-      >
+    <div
+      class="card-col"
+      style="
+        flex:1;
+        text-align:left;
+        padding-left:30px;
+      "
+    >
 
-        <p>
-          <b>गांव: ${firstRow.Village || ""}</b>
-        </p>
+      <p><b>गांव: ${
+        showFullCard
+          ? (firstRow.Village || "")
+          : hideCardData(firstRow.Village)
+      }</b></p>
 
-        <p>
-          <b>चौखला: ${firstRow.Chokala || ""}</b>
-        </p>
+      <p><b>चौखला: ${
+        showFullCard
+          ? (firstRow.Chokala || "")
+          : hideCardData(firstRow.Chokala)
+      }</b></p>
 
-        <p>
-          <b>जिला: ${firstRow.Distric || ""}</b>
-        </p>
+      <p><b>जिला: ${
+        showFullCard
+          ? (firstRow.Distric || "")
+          : hideCardData(firstRow.Distric)
+      }</b></p>
 
-        <p>
-          <b>Email: ${privateData.email}</b>
-        </p>
+      <p><b>Email: ${privateData.email}</b></p>
 
-        <p>
-          <b>राज्य: ${firstRow.State || ""}</b>
-        </p>
-
-      </div>
+      <p><b>राज्य: ${
+        showFullCard
+          ? (firstRow.State || "")
+          : hideCardData(firstRow.State)
+      }</b></p>
 
     </div>
-  `;
+
+  </div>
+`;
+
 
 
   // =========================================
@@ -336,39 +347,40 @@ if (firstRow.Photo) {
 
 
 
-rows.forEach(r => {
+   rows.forEach(r => {
 
   tableHTML += `<tr>`;
 
   headers.forEach(h => {
 
-    let value = r[h] ?? "";
+    
+   let value = r[h] ?? "";
 
-    // संपर्क सूत्र की Privacy
-    if (
-      h === "सम्पर्कसुत्र" ||
-      h === "सम्पर्क सूत्र"
-    ) {
-      value = formatPrivateData(r).mobile;
-    }
+   if (!showFullCard) {
 
-    // W Column में No होने पर
-    if (!showFullCard) {
+  if (
+    h === "सम्पर्कसुत्र" ||
+    h === "सम्पर्क सूत्र"
+  ) {
+    value = formatPrivateData(r).mobile;
+  } else if (h === "Email") {
+    value = formatPrivateData(r).email;
+  } else {
+    value = hideCardData(value);
+  }
 
-      // केवल क्रम संख्या पूरी दिखे
-      const isSerialNumber = [
-        "S/N",
-        "SN",
-        "क्रम संख्या",
-        "क्रमांक",
-        "क्र.सं."
-      ].includes(String(h).trim());
+  } else {
 
-      if (!isSerialNumber) {
-        value = hideCardData(value);
-      }
-    }
+  if (
+    h === "सम्पर्कसुत्र" ||
+    h === "सम्पर्क सूत्र"
+  ) {
+    value = formatPrivateData(r).mobile;
+  }
+  }
 
+
+    
     tableHTML += `
       <td title="${String(value).replace(/"/g, '&quot;')}">
         ${value}
@@ -379,7 +391,7 @@ rows.forEach(r => {
 
   tableHTML += `</tr>`;
 
-});
+ });
 
   tableHTML += `</table>`;
 
@@ -802,7 +814,7 @@ function printCard(cardId) {
 // =========================================
 // PRIVATE DATA FORMAT
 //
-// Hi/Mo:
+// Pub-Mo:
 // Yes = पूरा Mobile + पूरा Email
 // No  = Mobile Mask + Email Mask
 //
@@ -811,108 +823,113 @@ function printCard(cardId) {
 // No  → 91***1234
 // =========================================
 
-function formatPrivateData(row) {
-
-  // =========================================
-  // Hi/Mo COLUMN
-  // =========================================
-
-  const privacy =
-    String(row["Hi/Mo"] || "")
-      .trim()
-      .toLowerCase();
-
-
-  // =========================================
-  // MOBILE
-  // =========================================
-
-  const mobile =
-    String(row.सम्पर्कसुत्र || "").trim();
-
-  let mobileDisplay = mobile;
-
-
-  // -----------------------------------------
-  // Yes = पूरा Mobile दिखे
-  // No  = Mask
-  // -----------------------------------------
-
-  if (privacy !== "yes" && mobile) {
+function maskMobile(value) {
+  const mobile = String(value || "").trim();
   const digits = mobile.replace(/\D/g, "");
 
-  if (digits.length >= 10) {
-    const last10 = digits.slice(-10);
+  if (digits.length <= 5) return "••••••";
 
-    mobileDisplay =
-      "91*****" +
-      last10.slice(-3);
-  } else {
-    mobileDisplay = "91*****123";
-  }
+  return digits.slice(0, 2) +
+         "•••••" +
+         digits.slice(-3);
 }
 
-  // =========================================
-  // EMAIL
-  // =========================================
+function maskEmail(value) {
+  const email = String(value || "").trim();
+  const atPos = email.lastIndexOf("@");
 
-  const email =
-    String(row.Email || "").trim();
+  if (atPos <= 0) return "••••••";
 
-  let emailDisplay = email;
+  const name = email.slice(0, atPos);
+  const domain = email.slice(atPos);
+
+  if (name.length <= 5) {
+    return name.slice(0, 2) +
+           "•••••" +
+           domain;
+  }
+
+  return name.slice(0, 2) +
+         "•••••" +
+         name.slice(-3) +
+         domain;
+}
 
 
-  // -----------------------------------------
-  // No = Email Mask
-  // Yes = पूरा Email
-  // -----------------------------------------
 
-  if (privacy !== "yes" && email) {
 
-    const atPos = email.indexOf("@");
+function formatPrivateData(row) {
 
-    if (atPos > 0) {
+  const webPrivacy = String(
+    row["Pub-Web"] || row["W"] || ""
+  ).trim().toLowerCase();
 
-      const namePart =
-        email.substring(0, atPos);
+  const mobilePrivacy = String(
+    row["Pub-Mo"] || row["X"] || ""
+  ).trim().toLowerCase();
 
-      const domainPart =
-        email.substring(atPos);
+  const mobile = String(
+    row.सम्पर्कसुत्र || ""
+  ).trim();
 
-      if (namePart.length > 3) {
+  const email = String(
+    row.Email || ""
+  ).trim();
 
-        emailDisplay =
-          namePart.substring(0, 2) +
-          "****" +
-          domainPart;
+  // मोबाइल: पहले 2 और आखिरी 3 अंक
+  function maskMobile(value) {
+    const digits = String(value || "").replace(/\D/g, "");
 
-      } else {
+    if (digits.length <= 5) return "••••••";
 
-        emailDisplay =
-          "****" +
-          domainPart;
+    return digits.slice(0, 2) +
+           "•••••" +
+           digits.slice(-3);
+  }
 
-      }
-    
-    } else {
+  // Gmail: पहले 2 और आखिरी 3 अक्षर
+  function maskEmail(value) {
+    const atPos = value.lastIndexOf("@");
 
-      emailDisplay = "****";
+    if (atPos <= 0) return "••••••";
 
+    const name = value.slice(0, atPos);
+    const domain = value.slice(atPos);
+
+    if (name.length <= 5) {
+      return name.slice(0, 2) +
+             "•••••" +
+             domain;
     }
 
+    return name.slice(0, 2) +
+           "•••••" +
+           name.slice(-3) +
+           domain;
   }
 
+  // Pub-Web = No: मोबाइल और Gmail भी मास्क रहें
+  if (webPrivacy !== "yes") {
+    return {
+      mobile: maskMobile(mobile),
+      email: maskEmail(email)
+    };
+  }
 
+  // Pub-Mo = No: मोबाइल और Gmail मास्क रहें
+  if (mobilePrivacy !== "yes") {
+    return {
+      mobile: maskMobile(mobile),
+      email: maskEmail(email)
+    };
+  }
+
+  // दोनों अनुमति Yes: पूरा विवरण
   return {
-    mobile: mobileDisplay,
-    email: emailDisplay
+    mobile: mobile,
+    email: email
   };
-
 }
-
-
-
-
 
 
 
