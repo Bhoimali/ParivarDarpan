@@ -729,83 +729,213 @@ function filterCards() {
 
 
 
-// ✅ Updated Print Function
+
 function printCard(cardId) {
-  const colorMode = document.getElementById(`color-${cardId.replace("card-", "")}`).value;
-  const orientation = document.getElementById(`orient-${cardId.replace("card-", "")}`).value;
-  const card = document.getElementById(cardId).outerHTML;
+  try {
+    const id = cardId.replace("card-", "");
+    const colorSelect = document.getElementById("color-" + id);
+    const orientSelect = document.getElementById("orient-" + id);
+    const cardElement = document.getElementById(cardId);
 
-  const w = window.open('', '', 'width=1000,height=1400');
-  w.document.write(`
-    <html>
-       <head>
-   
-     <title>BhoiMali-${cardId.replace("card-", "")}</title>
+    if (!cardElement) {
+      alert("कार्ड नहीं मिला।");
+      return;
+    }
 
-    <style>
-      @page { size: ${orientation} Letter; margin: 10mm; }
-      body {
-        margin: 0; font-family: Arial, sans-serif;
-        display: flex; justify-content: center; align-items: center; height: 100%;
-        background: white;
-      }
-      .print-wrapper { display: flex; justify-content: center; align-items: center; width: 100%; }
-      .id-card {
-        background: ${colorMode === "color" ? "linear-gradient(145deg,#fff3e0,#ffcc80)" : "#fff"};
-        border-radius: 15px; padding: 15px; width: 90%; border: 1px solid #e65100;
-        filter: ${colorMode === "color" ? "none" : "grayscale(100%)"};
-      }
-      .top-header {
-        display:flex;justify-content:space-between;align-items:center;
-        background:${colorMode === "color" ? "linear-gradient(135deg,#ff9800,#e65100)" : "#000"};
-        color:#fff;border-radius:10px;padding:8px 15px;margin-bottom:12px;
-      }
-      .top-header img{width:50px;height:50px;border-radius:50%;border:2px solid #fff;}
-      .top-header h2{font-size:33px;flex:1;text-align:center;margin:0;}
-      .serial{font-weight:bold;font-size:32px;}
-      .card-header{display:flex;justify-content:space-between;gap:10px;margin-bottom:15px;flex-wrap:wrap;}
-      .card-col{flex:1;padding:5px;}
-      .card-col img{width:90px;height:90px;border-radius:50%;border:3px solid #e65100;object-fit:cover;margin:auto;display:block;}
-      .card-col h3{margin:0;font-size:16px;font-weight:bold;color:#d84315;}
-      .card-col p{margin:2px 0;font-size:13px;}
+    const colorMode = colorSelect ? colorSelect.value : "color";
+    const orientation = orientSelect ? orientSelect.value : "portrait";
 
-      table{width:100%;border-collapse:collapse;text-align:center;}
+    // केवल चुने हुए कार्ड का HTML
+    const cardHTML = cardElement.outerHTML;
 
-      th,td{border:1px solid #bf360c;padding:6px;font-size:13px;text-align:center;}
+    // Print के लिए पूरा HTML दस्तावेज
+    const printHTML = `
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bhoimali-${id}</title>
+<style>
+  @page {
+    size: A4 ${orientation};
+    margin: 8mm;
+  }
 
-      th{background:${colorMode === "color" ? "#ff6f00" : "#444"};color:#fff;}
-      .print-section{display:none;}
-
-      *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
-
-
-
-      .card-disclaimer {
-    display: table !important;
-    width: fit-content !important;
-    max-width: 100% !important;
+  * {
     box-sizing: border-box;
-    font-size: 10px;
-    line-height: 1.5;
-    text-align: center;
-    color: #000 !important;
-    background: #fff !important;
-    border: 1px solid #777;
-    padding: 4px 8px;
-    margin: 10px auto 0;
-    overflow-wrap: anywhere;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-    </style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #000;
+  }
 
-    </head>
-    <body onload="window.print()">
-      <div class="print-wrapper">${card}</div>
-    </body></html>
-  `);
-  w.document.close();
+  .id-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+    border: 1px solid #e65100;
+    border-radius: 10px;
+    background: ${colorMode === "color"
+      ? "linear-gradient(145deg,#fff3e0,#ffcc80)"
+      : "#fff"};
+    filter: ${colorMode === "color"
+      ? "none"
+      : "grayscale(100%)"};
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: ${colorMode === "color"
+      ? "linear-gradient(135deg,#ff9800,#e65100)"
+      : "#000"};
+    color: #fff;
+  }
+
+  .top-header img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+  }
+
+  .top-header h2 {
+    flex: 1;
+    margin: 0;
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .serial {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .card-col {
+    flex: 1;
+    min-width: 0;
+    padding: 4px;
+    overflow-wrap: anywhere;
+  }
+
+  .card-col img {
+    max-width: 90px;
+    height: 90px;
+    object-fit: cover;
+  }
+
+  .card-col h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #d84315;
+  }
+
+  .card-col p {
+    margin: 3px 0;
+    font-size: 11px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+  }
+
+  th, td {
+    border: 1px solid #bf360c;
+    padding: 4px;
+    font-size: 10px;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  th {
+    background: ${colorMode === "color" ? "#ff6f00" : "#444"};
+    color: #fff;
+  }
+
+  .print-section {
+    display: none !important;
+  }
+
+  .card-disclaimer {
+    display: block;
+    margin: 8px auto 0;
+    padding: 5px;
+    border: 1px solid #777;
+    font-size: 9px;
+    line-height: 1.4;
+    text-align: center;
+    color: #000;
+    background: #fff;
+  }
+
+  @media print {
+    .id-card {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+${cardHTML}
+</body>
+</html>`;
+
+    // Android ऐप में native Android Print सेवा
+    if (
+      window.AndroidPrint &&
+      typeof window.AndroidPrint.printHtml === "function"
+    ) {
+      window.AndroidPrint.printHtml(printHTML, "Bhoimali-" + id);
+      return;
+    }
+
+    // ब्राउज़र में fallback
+    const printWindow = window.open("", "_blank");
+
+    if (!printWindow) {
+      alert("प्रिंट विंडो नहीं खुली। ब्राउज़र की पॉप-अप सेटिंग जाँचें।");
+      return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(printHTML);
+    printWindow.document.close();
+
+    printWindow.onload = function () {
+      setTimeout(function () {
+        printWindow.focus();
+        printWindow.print();
+      }, 500);
+    };
+
+  } catch (error) {
+    console.error("Print/PDF Error:", error);
+    alert("प्रिंट/PDF में समस्या आई: " + error.message);
+  }
 }
 
 
