@@ -8,7 +8,7 @@ async function loadData() {
 
   loader.style.display = "block";
   container.innerHTML =
-    "<p style='text-align:center;color:#e65100;font-size:24px;font-weight:bold;padding:20px;'>Updating...</p>";
+    "<p style='position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); text-align:center;color:#e65100;font-size:24px;font-weight:bold;padding:20px;'>Updating...</p>";
 
   try {
     const response = await fetch(API_URL);
