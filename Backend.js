@@ -7,8 +7,33 @@ async function loadData() {
   const loader = document.getElementById("loader");
 
   loader.style.display = "block";
-  container.innerHTML =
-    "<p style='position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); text-align:center;color:#e65100;font-size:24px;font-weight:bold;padding:20px;'>Updating...</p>";
+  // container.innerHTML =
+  //   "<p style='position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); text-align:center;color:#e65100;font-size:24px;font-weight:bold;padding:20px;'>Updating...</p>";
+
+
+container.innerHTML = `
+  <div style="
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    max-width: 90vw;
+    box-sizing: border-box;
+    padding: 22px 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.20);
+    text-align: center;
+    color: #e65100;
+    font-size: clamp(28px, 8vw, 40px);
+    font-weight: bold;
+    z-index: 999999;
+  ">
+    Updating...
+  </div>
+`;
+
 
   try {
     const response = await fetch(API_URL);
