@@ -1,46 +1,41 @@
 
 
 
+
 function refreshCards() {
+  const container = document.getElementById("cardContainer");
+  const loader = document.getElementById("loader");
 
-  const container =
-    document.getElementById("cardContainer");
+  // वर्तमान स्क्रॉल पोजीशन सुरक्षित रखें
+  const savedScrollY = window.scrollY;
 
-  const loader =
-    document.getElementById("loader");
-
-  loader.style.display = "block";
-  container.style.opacity = "0.4";
-
+  if (loader) loader.style.display = "block";
+  if (container) container.style.opacity = "0.4";
 
   google.script.run
-
     .withSuccessHandler((data) => {
-
       renderCards(data);
 
-      loader.style.display = "none";
-      container.style.opacity = "1";
+      if (loader) loader.style.display = "none";
+      if (container) container.style.opacity = "1";
 
+      // रिफ्रेश के बाद उसी जगह वापस जाएँ
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: savedScrollY,
+          behavior: "instant"
+        });
+      });
     })
-
     .withFailureHandler((error) => {
+      console.error("Refresh Error:", error);
 
-      console.error(
-        "Refresh Error:",
-        error
-      );
+      if (loader) loader.style.display = "none";
+      if (container) container.style.opacity = "1";
 
-      loader.style.display = "none";
-      container.style.opacity = "1";
-
-      container.innerHTML =
-        "<p style='text-align:center;color:red;'>Data load नहीं हो सका।</p>";
-
+      alert("डेटा रिफ्रेश नहीं हो सका। कृपया पुनः प्रयास करें।");
     })
-
     .getSheetData();
-
 }
 
 
@@ -356,28 +351,28 @@ const cardHeader = `
     
    let value = r[h] ?? "";
 
-   if (!showFullCard) {
+   if (
+  h.trim() === "सम्पर्कसुत्र" ||
+  h.trim() === "सम्पर्क सूत्र"
+) {
 
-  if (
-    h === "सम्पर्कसुत्र" ||
-    h === "सम्पर्क सूत्र"
-  ) {
-    value = formatPrivateData(r).mobile;
-  } else if (h === "Email") {
-    value = formatPrivateData(r).email;
+  // Pub-Web = No होने पर मोबाइल मास्क करें
+  if (!showFullCard) {
+    value = maskMobile(value);
   } else {
-    value = hideCardData(value);
-  }
-
-  } else {
-
-  if (
-    h === "सम्पर्कसुत्र" ||
-    h === "सम्पर्क सूत्र"
-  ) {
+    // Pub-Web = Yes होने पर Pub-Mo भी जाँचें
     value = formatPrivateData(r).mobile;
   }
-  }
+
+} else if (h.trim() === "Email") {
+
+  value = formatPrivateData(r).email;
+
+} else if (!showFullCard) {
+
+  value = hideCardData(value);
+
+}
 
 
     
@@ -437,12 +432,21 @@ const cardHeader = `
       </select>
 
 
-      <button
-        class="print-btn"
-        onclick="printCard('card-${id}')"
-      >
-        🖨️ Print / PDF
-      </button>
+     
+<button
+  class="print-btn"
+  onclick="printCard('card-${id}')"
+>
+  🖨️ Print / PDF
+</button>
+
+<button
+  class="print-btn"
+  onclick="refreshCards()"
+>
+  🔄 Refresh
+</button>
+
 
     </div>
   `;
@@ -998,9 +1002,19 @@ function formatPrivateData(row) {
     row["Pub-Mo"] || row["X"] || ""
   ).trim().toLowerCase();
 
+  // const mobile = String(
+  //   row.सम्पर्कसुत्र || ""
+  // ).trim();
+
+
   const mobile = String(
-    row.सम्पर्कसुत्र || ""
-  ).trim();
+  row.सम्पर्कसुत्र ||
+  row["सम्पर्कसुत्र"] ||
+  row["सम्पर्क सूत्र"] ||
+  row["Mobile"] ||
+  row["मोबाइल"] ||
+  ""
+).trim();
 
   const email = String(
     row.Email || ""
@@ -1060,6 +1074,7 @@ function formatPrivateData(row) {
     email: email
   };
 }
+
 
 
 
