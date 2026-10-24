@@ -28,9 +28,13 @@ href="https://drive.google.com/thumbnail?id=1dP2JVtOM3sIpSUWKPmI2HoxryBbj0P-6">
 <div class="search-box">
   <input type="text" id="searchInput" placeholder="Search by Name, Father, Gotr, Village, Mobile..." onkeyup="filterCards()">
   
-  <button class="print-btn" onclick="refreshCards()">🔄 Refresh</button>
-  <div id="loader" class="loader" style="display:none;"></div>
+  <!-- <button class="print-btn" onclick="refreshCards()">🔄 Refresh</button>
+  <div id="loader" class="loader" style="display:none;"></div> -->
 
+
+
+<button class="print-btn" onclick="refreshCards()">🔄 Refresh</button>
+<div id="loader" class="loader" style="display:none;"></div>
 
   
 </div>
@@ -82,6 +86,21 @@ href="https://drive.google.com/thumbnail?id=1dP2JVtOM3sIpSUWKPmI2HoxryBbj0P-6">
 
 
   <div class="card-container" id="cardContainer"></div>
+
+
+
+
+
+
+<script>
+function refreshCurrentPage() {
+  // वर्तमान पेज और उसके filters/search को सुरक्षित रखें
+  const currentUrl = window.location.href;
+
+  // उसी पेज पर वापस लोड करें
+  window.location.replace(currentUrl);
+}
+</script>
 
 
 </body>
