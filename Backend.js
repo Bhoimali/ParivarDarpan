@@ -1,6 +1,6 @@
 
   // Rameshchendramali google sheet - 7WDarpanTemplet {P}
-const API_URL = "https://script.google.com/macros/s/AKfycbyHs7-4-tfbttfD06EYD2IRy6dgeqcSb3Y5GCJbIcLAdmkZaBcFQ8qNYFtfk7odxA48/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyFjxoPvsddykhEJUTrIhW8B-zyshBqKzEr_yG9ESUJGgej0LnOVc4jyGnTsqciGrCc/exec";
 
 async function loadData() {
   const container = document.getElementById("cardContainer");
